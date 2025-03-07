@@ -1,3 +1,4 @@
+# Basic Commands to Connect to Fortinet, Set an IP address and show full configuration on CLI
 from netmiko import Netmiko
 
 fortinet = {

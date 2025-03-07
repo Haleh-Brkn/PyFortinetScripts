@@ -1,8 +1,8 @@
-# Applying a list of IP addresses from csv file and assign them one by one to Fortinet
- 
-from csv import DictReader # importing DictReader to Read from csv file and turn them into python dictionary. come handy later
+# Assigning IP addresses to Fortinet and Adding them to IP_group defined for each.
+from csv import DictReader
+import time
 from netmiko import Netmiko
-import time 
+
 fortinethost = {
     "host": "192.168.112.132",
     "username": "admin",
@@ -10,11 +10,8 @@ fortinethost = {
     "device_type":"fortinet"
 }
 
-
-## connect to the fortinet and till the loop is not finished it will hold the connection
-net_connect = Netmiko(**fortinethost) #using ** to define dictionary object
-
-with open('../misc/ips.csv') as csv_file:
+net_connect = Netmiko(**fortinethost)
+with open('../misc/ip_group.csv') as csv_file:
     ip_details = DictReader(csv_file)
 
     for ip in ip_details:
@@ -25,7 +22,12 @@ with open('../misc/ips.csv') as csv_file:
                 f"edit {ip['Name']}",
                 "set type ipmask",
                 f"set subnet  {ip['IP']}/32",
+                "end",
+                "config firewall addrgrp",
+                f"edit {ip['IPGroup']}",
+                f"append member {ip['Name']}",
                 "end"]
-        sentConfigs = net_connect.send_config_set(config_commands)        
-        print(f"done with logs: {sentConfigs}")
-
+        sent_configs = net_connect.send_config_set(config_commands)
+        print(f"Done! Log: {sent_configs}")
+        # sentConfigs = net_connect.send_config_set(config_commands)        
+        # print(f"done with logs: {sentConfigs}")
