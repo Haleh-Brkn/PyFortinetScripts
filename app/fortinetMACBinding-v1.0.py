@@ -1,3 +1,12 @@
+''''
+V1.0: it receives the IP address and based on the IP address will look for relative Edit ID table.
+then it will set the MAC address that is being received by Operator.
+
+NOTE:
+the Code still miss querying the whole EDIT ID table and will be modified soon.
+the documentation is still not complete and commeting is required.
+
+'''
 import re 
 from netmiko import Netmiko
 import time
