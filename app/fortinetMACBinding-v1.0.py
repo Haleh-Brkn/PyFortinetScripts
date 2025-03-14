@@ -2,10 +2,6 @@
 V1.0: it receives the IP address and based on the IP address will look for relative Edit ID table.
 then it will set the MAC address that is being received by Operator.
 
-NOTE:
-the Code still miss querying the whole EDIT ID table and will be modified soon.
-the documentation is still not complete and commeting is required.
-
 '''
 import re 
 from netmiko import Netmiko
@@ -110,30 +106,29 @@ def find_arp_entry_by_ip(arp_table_data, target_ip):
     return print("Entered IP is NOT Registered in ARP-Table!")  # IP address not found in ARP table
 
 
-
 show_arp_table_output = net_connect.send_config_set(get_show_result_command_list)
 #print("\n---Show ARP Table Output---\n")
 #print(show_arp_table_output) # Print raw show output for inspection
 
-
 # 2. Parse ARP Table Output
 arp_table_data = parse_arp_table_output_for_ip_search(show_arp_table_output)
-print("\n ##### EXTRACTED DATA ###### \n")
+#print("\n ##### EXTRACTED DATA ###### \n")
 #print(arp_table_data)
-
 
 # 3. Search for IP Address
 found_entry_info = find_arp_entry_by_ip(arp_table_data, RecievedData['IPAddress'])
 
 if found_entry_info:
+    time.sleep(1)
+    print("Checking...")
     time.sleep(1.5)
-    print(f"\nIP address: {RecievedData['IPAddress']} found in ARP table.")
+    print(f"\nTarget IP address: {RecievedData['IPAddress']} found in ARP table.")
     time.sleep(1.5)
-    print(f"Edit ID: {found_entry_info['edit_id']}")
+    print(f"Target Edit ID: {found_entry_info['edit_id']}")
     time.sleep(1.5)
-    print(f"the MAC address is {RecievedData['MACAddress']}")
+    print(f"the given MAC address is {RecievedData['MACAddress']}")
     time.sleep(1.5)
-    print(f"Setting Configuration...")
+    print(f"Applying Configuration...")
     time.sleep(3)
     ValidatedEditID = found_entry_info['edit_id']
 
@@ -150,4 +145,6 @@ if found_entry_info:
     ModifiedMAC = net_connect.send_config_set(Modify_MAC_Commands)
     #print(f"After Modification {ModifiedMAC}")
     print(f"\nMAC Binding is Successfully Done!")
-
+    net_connect.disconnect()
+else:
+    print("Existing From Environment")
