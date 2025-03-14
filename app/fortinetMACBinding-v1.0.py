@@ -11,7 +11,7 @@ import re
 from netmiko import Netmiko
 import time
 fortinet = {
-    'host':'172.24.24.15',
+    'host':'192.168.112.132',
     'username': 'admin',
     'password': 'admin',
     'device_type': 'fortinet'
@@ -101,9 +101,13 @@ def find_arp_entry_by_ip(arp_table_data, target_ip):
 
     for entry in arp_table_data:
         if 'ip' in entry and entry['ip'] == target_ip:
+            if entry['mac']:
+                print(f"the IP {entry['ip']} has MAC address of {entry['mac']} ")
+            else:
+                print(f"No Mac Address is set for IP {entry['ip']}")
             return {'edit_id': entry['edit_id'], 'interface': entry['interface']} # Return edit_id and interface
-        else:
-            return print("Entered IP is NOT Registered in ARP-Table!")  # IP address not found in ARP table
+
+    return print("Entered IP is NOT Registered in ARP-Table!")  # IP address not found in ARP table
 
 
 
@@ -114,7 +118,7 @@ show_arp_table_output = net_connect.send_config_set(get_show_result_command_list
 
 # 2. Parse ARP Table Output
 arp_table_data = parse_arp_table_output_for_ip_search(show_arp_table_output)
-#print("\n ##### EXTRACTED DATA ###### \n")
+print("\n ##### EXTRACTED DATA ###### \n")
 #print(arp_table_data)
 
 
@@ -122,6 +126,7 @@ arp_table_data = parse_arp_table_output_for_ip_search(show_arp_table_output)
 found_entry_info = find_arp_entry_by_ip(arp_table_data, RecievedData['IPAddress'])
 
 if found_entry_info:
+    time.sleep(1.5)
     print(f"\nIP address: {RecievedData['IPAddress']} found in ARP table.")
     time.sleep(1.5)
     print(f"Edit ID: {found_entry_info['edit_id']}")
