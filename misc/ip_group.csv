@@ -1,0 +1,6 @@
+Name,IP,IPGroup
+User1,192.168.10.30,Group_1
+User2,192.168.10.31,Group_2
+User3,192.168.10.32,Group_2
+User4,192.168.10.33,Group_1
+User5,192.168.10.34,Group_1
