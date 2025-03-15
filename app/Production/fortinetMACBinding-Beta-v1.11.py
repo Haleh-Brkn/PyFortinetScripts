@@ -117,6 +117,7 @@ while ValidatedMAC is None:
     else:
         print("Error: MAC address format is NOT valid. Use format like: 00:11:22:33:44:55")
 
+# save all required data in a dictionary
 RecievedData = {
     "IPAddress": ValidatedIP,
     "MACAddress": ValidatedMAC,
@@ -129,6 +130,7 @@ time.sleep(1)
 print("Applying Configuration...")
 time.sleep(3)
 
+# preparing commands scripts to Bind MAC address for selected Edit ID (which is defined via IP address)
 Modify_MAC_Commands=[
     'config vdom',
     'edit root',
@@ -139,6 +141,7 @@ Modify_MAC_Commands=[
     'end',
 ]
 
+# applying changes on Fortinet CLI.
 ModifiedMAC = net_connect.send_config_set(Modify_MAC_Commands)
 print(f"\nMAC Binding is Successfully Done!")
 net_connect.disconnect()
